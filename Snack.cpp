@@ -287,20 +287,30 @@ void ExitGame()
         }
     }
 }
+
+int food_counter = 0;   //initialisation du compteur
+
 void Food()
 {
     if (head.x == food.x && head.y == food.y)
     {
-        length++;
+        food_counter++;
+
+        if(food_counter == 3){
+            length++;
+            food_counter = 0;
+        }
+
         time_t a;
         a = time(0);
         srand(a);
         food.x = rand() % 70;
+
         if (food.x <= 10)
             food.x += 11;
         food.y = rand() % 30;
-        if (food.y <= 10)
 
+        if (food.y <= 10)
             food.y += 11;
     }
     else if (food.x == 0)/*to create food for the first time coz global variable are initialized with 0*/
@@ -427,7 +437,7 @@ void Boarder()
     system("cls");
     int i;
     GotoXY(food.x, food.y);   /*displaying food*/
-    printf("F");
+    printf("Q");
     for (i = 10; i < 71; i++)
     {
         GotoXY(i, 10);
