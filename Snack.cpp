@@ -15,7 +15,7 @@
 #define RIGHT 77
 
 
-int sleep_time // pour gérer la vitesse
+
 
 int length;
 int bend_no;
@@ -60,7 +60,17 @@ int main()
 
     system("cls");
 
-    vitesse();
+    int sleep_time
+    char choix;
+    printf("Cliquez sur 'r' pour rapide et 'l' pour lent ");
+    choix = getch();
+
+    if (choix == 'r') {
+        sleep_time = 0;
+    }
+    else if (choix == 'L') {
+        sleep_time = 100;
+    }
 
     system("cls");
 
@@ -88,10 +98,6 @@ int main()
 
 }
 
-void vitesse() {
-    printf("Cliquez sur R pour rapide et L pour lent ");
-    
- }
 
 void Move()
 {
@@ -258,7 +264,7 @@ void Down()
         body[len].y = head.y - i;
         len++;
 
-        usleep(SLEEP_TIME);
+        usleep(sleep_time);
     }
     Bend();
     if (!kbhit())
@@ -354,7 +360,7 @@ void Left()
         body[len].y = head.y;
         len++;
 
-        usleep(SLEEP_TIME);
+        usleep(sleep_time);
     }
     Bend();
     if (!kbhit())
@@ -380,7 +386,7 @@ void Right()
         body[len].y=head.y;*/
         len++;
 
-        usleep(SLEEP_TIME);
+        usleep(sleep_time);
     }
     Bend();
     if (!kbhit())
@@ -483,6 +489,7 @@ void Print()
     printf("\n\nPress any key to play game...");
     if (getch() == 27)
         exit(0);
+    
 }
 void record()
 {
@@ -567,7 +574,7 @@ void Up()
         body[len].y = head.y + i;
         len++;
 
-        usleep(SLEEP_TIME);
+        usleep(sleep_time);
     }
     Bend();
     if (!kbhit())
