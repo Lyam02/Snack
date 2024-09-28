@@ -15,7 +15,7 @@
 #define RIGHT 77
 
 
-
+test
 
 int length;
 int bend_no;
@@ -61,7 +61,7 @@ int main()
     system("cls");
 
     int sleep_time
-    char choix;
+        char choix;
     printf("Cliquez sur 'r' pour rapide et 'l' pour lent ");
     choix = getch();
 
