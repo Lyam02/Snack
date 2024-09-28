@@ -7,11 +7,15 @@
 #include <time.h>
 #include <windows.h>
 #include <process.h>
+#include <unistd.h> // Pour sleep()
 
 #define UP 72
 #define DOWN 80
 #define LEFT 75
 #define RIGHT 77
+
+
+int sleep_time // pour gérer la vitesse
 
 int length;
 int bend_no;
@@ -56,6 +60,10 @@ int main()
 
     system("cls");
 
+    vitesse();
+
+    system("cls");
+
     load();
 
     length = 5;
@@ -70,7 +78,7 @@ int main()
 
     Food(); //to generate food coordinates initially
 
-    life = 3; //number of extra lives
+    life = 0; //number of extra lives
 
     bend[0] = head;
 
@@ -79,6 +87,11 @@ int main()
     return 0;
 
 }
+
+void vitesse() {
+    printf("Cliquez sur R pour rapide et L pour lent ");
+    
+ }
 
 void Move()
 {
@@ -244,6 +257,8 @@ void Down()
         body[len].x = head.x;
         body[len].y = head.y - i;
         len++;
+
+        usleep(SLEEP_TIME);
     }
     Bend();
     if (!kbhit())
@@ -338,6 +353,8 @@ void Left()
         body[len].x = head.x + i;
         body[len].y = head.y;
         len++;
+
+        usleep(SLEEP_TIME);
     }
     Bend();
     if (!kbhit())
@@ -362,6 +379,8 @@ void Right()
         /*body[len].x=head.x-i;
         body[len].y=head.y;*/
         len++;
+
+        usleep(SLEEP_TIME);
     }
     Bend();
     if (!kbhit())
@@ -547,6 +566,8 @@ void Up()
         body[len].x = head.x;
         body[len].y = head.y + i;
         len++;
+
+        usleep(SLEEP_TIME);
     }
     Bend();
     if (!kbhit())
