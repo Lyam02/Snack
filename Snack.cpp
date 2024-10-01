@@ -15,15 +15,18 @@
 #define RIGHT 77
 
 
-test
+int sleep_time = 100; // pour gérer la vitesse
 
 int length;
 int bend_no;
 int len;
 char key;
+int life;
+void LoadGame();
+void SaveGame();
 void record();
 void load();
-int life;
+void SetSpeed();
 void Delay(long double);
 void Move();
 void Food();
@@ -51,6 +54,7 @@ typedef  struct coordinate coordinate;
 
 coordinate head, bend[500], food, body[30];
 
+
 int main()
 {
 
@@ -59,159 +63,152 @@ int main()
     Print();
 
     system("cls");
-
-    int sleep_time
-        char choix;
-    printf("Cliquez sur 'r' pour rapide et 'l' pour lent ");
-    choix = getch();
-
-    if (choix == 'r') {
-        sleep_time = 0;
-    }
-    else if (choix == 'L') {
-        sleep_time = 100;
-    }
+    
+    SetSpeed();
 
     system("cls");
 
     load();
 
-    length = 5;
+    system("cls");
 
-    head.x = 25;
+    printf("Voulez-vous charger une sauvegarde (o/n)? ");
+    char load_choice = getch();
+    if (load_choice == 'o' || load_choice == 'O') {
+        LoadGame();
+    }
+    else {
+        length = 5;
+        head.x = 25;
+        head.y = 20;
+        head.direction = RIGHT;
+    }
+    printf("Si vous voulez sauvegarder cliquez sur 's'");
 
-    head.y = 20;
-
-    head.direction = RIGHT;
+    
 
     Boarder();
-
-    Food(); //to generate food coordinates initially
-
-    life = 0; //number of extra lives
-
+    Food(); 
+    life = 1; 
     bend[0] = head;
 
-    Move();   //initialing initial bend coordinate
+    Move(); 
+
+    if (key == 's') {
+        SaveGame();
+    }
 
     return 0;
+}
+
+void SetSpeed() {
+    char choix;
+    printf("Cliquez sur 'r' pour rapide, 'l' pour lent : ");
+    choix = getch();
+
+    if (choix == 'r') {
+        sleep_time = 0;
+    }
+    else if (choix == 'l') {
+        sleep_time = 1000;
+
+    }
+    else {
+
+        sleep_time = 100;
+    }
 
 }
 
+void SaveGame() {
+    FILE* file = fopen("savegame.txt", "w");
+    if (file == NULL) {
+        printf("Erreur lors de l'ouverture du fichier de sauvegarde.\n");
+        return;
+    }
 
-void Move()
-{
-    int a, i;
+    fprintf(file, "%d\n%d\n", length, life);
 
-    do
-    {
+    for (int i = 0; i < length; i++) {
+        fprintf(file, "%d %d\n", bend[i].x, bend[i].y);
+    }
 
+    fprintf(file, "%d %d\n", food.x, food.y);
+
+    fclose(file);
+    printf("Jeu sauvegardé avec succès.\n");
+}
+
+void LoadGame() {
+    FILE* file = fopen("savegame.txt", "r");
+    if (file == NULL) {
+        printf("Aucune sauvegarde trouvée.\n");
+        return;
+    }
+
+    fscanf(file, "%d\n%d\n", &length, &life);
+
+    for (int i = 0; i < length; i++) {
+        fscanf(file, "%d %d\n", &bend[i].x, &bend[i].y);
+    }
+
+    fscanf(file, "%d %d\n", &food.x, &food.y);
+
+    fclose(file);
+    printf("Jeu chargé avec succès.\n");
+}
+
+
+void Move() {
+    int a, i, sleep;
+
+    while (1) { 
         Food();
         fflush(stdin);
-
         len = 0;
 
-        for (i = 0; i < 30; i++)
-
-        {
-
+        for (i = 0; i < 30; i++) {
             body[i].x = 0;
-
             body[i].y = 0;
-
-            if (i == length)
-
-                break;
-
+            if (i == length) break;
         }
 
         Delay(length);
-
         Boarder();
 
-        if (head.direction == RIGHT)
-
-            Right();
-
-        else if (head.direction == LEFT)
-
-            Left();
-
-        else if (head.direction == DOWN)
-
-            Down();
-
-        else if (head.direction == UP)
-
-            Up();
+       
+        if (head.direction == RIGHT) Right();
+        else if (head.direction == LEFT) Left();
+        else if (head.direction == DOWN) Down();
+        else if (head.direction == UP) Up();
 
         ExitGame();
 
-    } while (!kbhit());
+       
+        if (kbhit()) {
+            key = getch();
 
-    a = getch();
-
-    if (a == 27)
-
-    {
-
-        system("cls");
-
-        exit(0);
-
-    }
-    key = getch();
-
-    if ((key == RIGHT && head.direction != LEFT && head.direction != RIGHT) || (key == LEFT && head.direction != RIGHT && head.direction != LEFT) || (key == UP && head.direction != DOWN && head.direction != UP) || (key == DOWN && head.direction != UP && head.direction != DOWN))
-
-    {
-
-        bend_no++;
-
-        bend[bend_no] = head;
-
-        head.direction = key;
-
-        if (key == UP)
-
-            head.y--;
-
-        if (key == DOWN)
-
-            head.y++;
-
-        if (key == RIGHT)
-
-            head.x++;
-
-        if (key == LEFT)
-
-            head.x--;
-
-        Move();
-
-    }
-
-    else if (key == 27)
-
-    {
-
-        system("cls");
-
-        exit(0);
-
-    }
-
-    else
-
-    {
-
-        printf("\a");
-
-        Move();
-
+            
+            if (key == 's') {
+                SaveGame(); 
+            }
+            else if (key == 27) { 
+                SaveGame(); 
+                exit(0);
+            }
+            else if ((key == RIGHT && head.direction != LEFT) ||
+                (key == LEFT && head.direction != RIGHT) ||
+                (key == UP && head.direction != DOWN) ||
+                (key == DOWN && head.direction != UP)) {
+                bend_no++;
+                bend[bend_no] = head; 
+                head.direction = key; 
+            }
+        }
+        
     }
 }
+
 
 void gotoxy(int x, int y)
 {
@@ -336,13 +333,15 @@ void Food()
     }
     else if (food.x == 0)/*to create food for the first time coz global variable are initialized with 0*/
     {
-        food.x = rand() % 70;
-        if (food.x <= 10)
-            food.x += 11;
-        food.y = rand() % 30;
-        if (food.y <= 10)
-            food.y += 11;
-    }
+        
+            food.x = rand() % 70;
+            if (food.x <= 10)
+                food.x += 11;
+            food.y = rand() % 30;
+            if (food.y <= 10)
+                food.y += 11;
+
+	}
 }
 void Left()
 {
@@ -489,7 +488,6 @@ void Print()
     printf("\n\nPress any key to play game...");
     if (getch() == 27)
         exit(0);
-    
 }
 void record()
 {
